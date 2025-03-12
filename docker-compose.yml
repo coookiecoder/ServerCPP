@@ -1,0 +1,18 @@
+services:
+  Dev:
+    image: dev:latest
+    build:
+      context: .
+      dockerfile: dev_docker/Dockerfile
+    ports:
+      - "2080:80"
+      - "2443:443"
+
+  Release:
+    image: release:latest
+    build:
+      context: .
+      dockerfile: release_docker/Dockerfile
+    ports:
+      - "1080:80"
+      - "1443:443"
