@@ -5,6 +5,7 @@
 #include <cstring>
 #include <csignal>
 #include <thread>
+#include <sstream>
 
 #include <sys/socket.h>
 #include <fcntl.h>

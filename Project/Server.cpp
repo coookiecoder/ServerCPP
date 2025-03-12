@@ -77,6 +77,11 @@ void Server::server_loop() const {
     while (this->running) {
         ready_fds = poll(poll_fds, n_fds, 1000);
 
+		if (!ready_fds)
+			continue;
+
+		std::cout << "[debug] | " << ready_fds << " fds are ready" << std::endl;
+
         for (int current_fd = 0; current_fd < n_fds && ready_fds > 0; ++current_fd) {
             if (poll_fds[current_fd].revents & POLLIN) {
                 if (poll_fds[current_fd].fd == server_socket) {
@@ -109,9 +114,16 @@ void Server::handle_old_connection(int client_fd, pollfd poll_fds[1024], int &n_
     ssize_t response_size = recv(client_fd, buffer, sizeof(buffer), 0);
 
     if (response_size > 0) {
-
+		std::stringstream result;
+        result << buffer;
+		while (response_size == 513) {
+			response_size = recv(client_fd, buffer, sizeof(buffer), 0);
+			result << buffer;
+		}
+		std::cout << "[info]  | message from " << client_fd << " size : " << result.str().size() << " byte" << std::endl;
+        write(client_fd, "ping\n", 5);
     } else {
-        std::cout << "[info]  | removing client index : " << current_fd << std::endl;
+        std::cout << "[info]  | removing client fd : " << client_fd << std::endl;
         for (int i = current_fd; i < n_fds - 1; ++i) {
             poll_fds[i] = poll_fds[i + 1];
         }
@@ -120,5 +132,6 @@ void Server::handle_old_connection(int client_fd, pollfd poll_fds[1024], int &n_
         poll_fds[n_fds].events = 0;
         poll_fds[n_fds].revents = 0;
         current_fd--; // Stay on the same index to check the next item after removal
+        close(client_fd);
     }
 }

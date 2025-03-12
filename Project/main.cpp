@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sstream>
-#include <vector>
 #include <csignal>
 
 #include "Server.hpp"
@@ -17,6 +16,9 @@ void stop(int code) {
 }
 
 int main(int argc, char **argv) {
+	if (argc == 1)
+		return 0;
+
 	servers = new Server*[argc - 1];
 
 	for (int current_server = 1; current_server < argc; ++current_server) {
