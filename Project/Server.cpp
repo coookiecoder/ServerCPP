@@ -110,7 +110,7 @@ void Server::handle_new_connection(pollfd poll_fds[1024], int &n_fds) const {
 }
 
 void Server::handle_old_connection(int client_fd, pollfd poll_fds[1024], int &n_fds, int &current_fd) const {
-    char buffer[513];
+    char buffer[513] = {};
     ssize_t response_size = recv(client_fd, buffer, sizeof(buffer), 0);
 
     if (response_size > 0) {
